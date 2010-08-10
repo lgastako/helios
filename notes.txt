@@ -53,3 +53,22 @@ of it, so for now, no.
 ... Should we have priorities or does that just complicate things?
 
 ... Should we send current timestamp and let the server do adjustments or what?
+
+
+Other junk
+----------
+http://www.mongodb.org/display/DOCS/Using+a+Large+Number+of+Collections
+
+That page says there's a cap of 24k namespaces and each collection
+counts as a namespace as does each index so if there's one index per
+collection thats a max of 12k collections, less if you have more
+indexes.
+
+Though it does say there's an --nssize option to adjust.  Max size for
+namespace file is 2gb but it doesn't say how many ns's that'd
+accomodate.
+
+Maybe we should just put all events in one collection with a key that
+is the type instead of making a collection per type.
+
+Or, do something even more awesome.

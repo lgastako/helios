@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Small HTML 5</title>
+</head>
+<body>
+  <a href="/">Home</a>
+  <table border="1">
+    <tr><th>collection</th><th>count</th></tr>
+    {% for collection_name, count in counts.items(): %}
+    <tr>
+      <td><a href="/col/{{collection_name}}">{{collection_name}}</a></td>
+      <td>{{count}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <a href="/">Home</a>
+</body>
+</html>

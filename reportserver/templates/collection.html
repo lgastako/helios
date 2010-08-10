@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Helios: Collection: {{ collection_name }}</title>
+</head>
+<body>
+  <header>
+    <navigation>
+      <a href="/">Home</a>
+    </navigation>
+    <p>
+      Showing {{ offset }} to {{ offset + limit }} of {{ count }}.
+    </p>
+  </header>
+  <article>
+    <table border="1">
+      <tr>
+        <th>id</th>
+        <th>timestamp</th>
+        <th>doc</th>
+      </tr>
+      {% for doc_id, timestamp, doc in docs: %}
+      <tr>
+        <td>{{ doc_id }}</td>
+        <td>{{ timestamp }}</td>
+        <td>{{ doc }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </article>
+  <navigation>
+    {% if offset > 0 %}
+    <a href="/col/{{ collection_name }}?offset={{ prev_offset }}">&lt;&lt; Prev</a>
+    {% endif %}
+    {% if next_offset %}
+    <a href="/col/{{ collection_name }}?offset={{ next_offset }}">Next &gt;&gt;</a>
+    {% endif %}
+  </navigation>
+  <footer>
+    <navigation>
+      <a href="/">Home</a>
+    </navigation>
+  </footer>
+</body>
+</html>
