@@ -22,14 +22,26 @@ def remove_id(doc):
     return doc
 
 
+def adapt_query(query):
+    for key, value in query.items():
+        del query[key]
+        query["fields." + key] = value
+    return query
+
+
 @app.route("/col/<collection_name>")
 def collection_view(collection_name):
 #    limit = request.args.get("limit", DEFAULT_LIMIT)
     limit = 20
     offset = int(request.args.get("offset", 0))
+    query = request.args.get("query", None)
+    if query:
+        query = adapt_query(json.loads(query))
+    else:
+        query = {}
     db = get_mongo_db()
     collection = getattr(db, collection_name)
-    raw_docs = collection.find().skip(offset).limit(limit)
+    raw_docs = collection.find(query).skip(offset).limit(limit)
     docs = [(rdoc["_id"], rdoc["ts"], json.dumps(rdoc["fields"]))
             for rdoc in raw_docs]
     count = collection.count()
