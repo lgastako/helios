@@ -39,6 +39,7 @@ def _safe_get_connection():
         logger.exception("Could not get connection.")
         return None
 
+
 def _post_event(conn, event):
     doctype, fields = event
     collection = getattr(conn, doctype)
