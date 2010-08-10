@@ -1,0 +1,55 @@
+Helios
+======
+
+Introduction
+------------
+
+Helios is a set of client/server tools for recording arbitrary
+information about events(?) that occur in software systems.  It's like
+syslog but more structure or like SNMP but more flexible and not as
+stupid.
+
+It consists of several components that work together:
+
+- Client libraries.  (Prototyped in python).  The client libraries
+  allow developers to make calls to record whatever it is that they
+  want to record.
+
+- Remote queue servers.  Optional components that help scale the data
+  collection on the remote nodes.
+
+- Centralized data store.  This is where all data ultimately ends up.
+  While talked about as a singluar entity in most production
+  deployments would probably be a large cluster of mongo db instances.
+
+- Report server.  This is a webapp that makes information from the
+  datastore available for ad-hoc queries to consumers.  Basically
+  provides a pretty/easy UI on top of the mongo query facilities.
+
+
+Client API
+----------
+
+API calls MUST return immediately.
+
+ - Suggested implementation: Put on an in-process queue.  A
+   thread/process/etc picks up the message from the in-process queue
+   and depending on configuration either writes it to an
+   out-of-process queue or sends it directly to the remote recorder
+   server thing.
+
+API calls MUST never raise an exception.
+
+API calls MUST log using the default logging mechanism if they fail to
+handle a document.  The logged message MUST contain the entire
+document.  [Caveat: if it's under a certain size?... maybe SHOULD for
+this case and/or any other case where something about the document
+makes it un loggable]
+
+In theory client APIs should provide the ability to send stuff to
+different helios servers, but really that kinda goes against the point
+of it, so for now, no.
+
+... Should we have priorities or does that just complicate things?
+
+... Should we send current timestamp and let the server do adjustments or what?
