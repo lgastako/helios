@@ -22,3 +22,9 @@ Specific the goals are:
 We will likely be developing the python client first and foremost and
 that is what we would like to use at our day job but we definitely
 welcome submissions for other languages from other contributors.
+
+I would need to write a lot more to fully express the reasoning behind
+our experimenting with this approach and I think a working prototype
+will do a better job of demonstrating so I am going to focus my time
+on getting things working rather than writing a better description.
+Maybe by then if no one else has written a better description, I'll try.
