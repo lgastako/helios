@@ -1,7 +1,10 @@
+import logging
 import threading
 
 from Queue import Queue
 from time import time
+
+logger = logging.getLogger(__name__)
 
 
 class Event(object):
@@ -14,10 +17,9 @@ class Event(object):
 
 class AbstractHeliosClient(object):
 
-    started = False
-
     def __init__(self):
         self.queue = Queue()
+        self.started = False
 
     def record(self, event, **kwargs):
         timestamp = time()
@@ -34,6 +36,7 @@ class AbstractHeliosClient(object):
         self.queue.put(event)
 
     def process_queue(self):
+        logger.debug("process_queue started.")
         # TODO: Error handling, incremental backoff/retry, etc.
         while True:
             event = self.queue.get()
@@ -43,16 +46,15 @@ class AbstractHeliosClient(object):
     def process_event(self, event):
         raise NotImplementedError
 
-    @classmethod
-    def start(cls):
-        if cls.started:
+    def start(self):
+        if self.started:
+            logger.error("Already started.  Can't start again.")
             return False
-        cls.started = True
 
-        client = cls()
+        self.started = True
 
         # Fucking GIL.  Fuck python.
-        thread = threading.Thread(target=client.process_queue,
+        thread = threading.Thread(target=self.process_queue,
                                   name="helios-queue-processor")
         thread.setDaemon(True)
         thread.start()

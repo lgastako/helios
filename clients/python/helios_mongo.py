@@ -28,17 +28,17 @@ class Client(AbstractHeliosClient):
         self.db = self.conn.helios_db
 
     def process_event(self, event):
-        doctype, fields = event
-        collection = getattr(self.conn, doctype)
-        collection.insert(self._convert_event(fields))
+        collection = getattr(self.db, event.event_type)
+        collection.insert(self._convert_event(event))
         return True
 
     def _convert_event(self, event):
         """Converts an event to a document postable to mongo."""
-        timestamp, doctype, fields = raw_event
-        event = {"ts": timestamp,
-                 "fields": fields}
-        return doctype, event
+
+        doc = {"ts": event.timestamp}
+        if event.args:
+            doc["fields"] = event.args
+        return doc
 
 
 # ...if instantiating the queue at import is bad, this is probably
