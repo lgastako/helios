@@ -10,9 +10,8 @@ from abstractclient import AbstractHeliosClient
 
 class NullClient(AbstractHeliosClient):
 
-    def process_queue(self):
-        while True:
-            sleep(30)
+    def process_event(self):
+        sleep(30)
 
 
 class AbstractHeliosClientTests(unittest.TestCase):
