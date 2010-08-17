@@ -27,6 +27,42 @@ It consists of several components that work together:
   provides a pretty/easy UI on top of the mongo query facilities.
 
 
+Design Decisions
+----------------
+
+NOTE: These are all in a state of flux and may change at any moment.
+
+- The client should use only HTTP to communicate with the server,
+  including sending the actual log messages.  This means that various
+  cross-cutting concerns like security and load balancing can be
+  off-loaded to systems optimized for handling these concerns.
+
+  - The obvious corollary to this is that the HTTP communication
+    should be optimized using e.g. Keep-Alives and/or HTTP pipelining.
+    Of course the spec says that pipelining should not be used for non
+    idempotent requests like POSTs and our API should be POST oriented
+    so that there is no restriction on payload size.  It may or may
+    not also be a good idea to keep multiple connections per client
+    open.
+
+    - The obvious corollary to this is that the server should respond
+      with a success or error message ASAP (and e.g. do queueing on
+      the server side as well) so that the server is not responsible
+      for causing a backup on the client side.  Of course if we're
+      trying to be as fault tolerant as possible and prevent data loss
+      as much as possible then we should be committing the events to
+      some sort of persistent (think f-sync'd) store on the server
+      side before acknowledging.
+
+    - Another corrollary here is that since the server is going to
+      already be handling an extremely high number of persistent
+      connections (due to e.g. lots of apps writing lots of stuff) if
+      we're adding on top of that possibly multiple http connections
+      then the server will have to be extremely efficient about
+      handling connections which means it should probably be
+      event-driven (e.g. twisted, tornado, etc).
+
+
 Client API
 ----------
 
