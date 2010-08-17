@@ -2,13 +2,17 @@
 
 import unittest
 
+from time import sleep
 from time import time
 
 from abstractclient import AbstractHeliosClient
 
 
 class NullClient(AbstractHeliosClient):
-    pass
+
+    def process_queue(self):
+        while True:
+            sleep(30)
 
 
 class AbstractHeliosClientTests(unittest.TestCase):

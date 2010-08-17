@@ -13,3 +13,6 @@ class AbstractHeliosClient(object):
 
     def qsize(self):
         return self.queue.qsize()
+
+    def process_queue(self):
+        raise NotImplementedError
