@@ -63,6 +63,16 @@ NOTE: These are all in a state of flux and may change at any moment.
       event-driven (e.g. twisted, tornado, etc).
 
 
+Open Questions
+--------------
+
+- Compression (gzip or otherwise) between client and server?
+
+- ZeroMQ on the client side?  On the server side?
+
+- UDP?
+
+
 Client API
 ----------
 
