@@ -1,5 +1,5 @@
 import unittest
-import helios
+import helios_mongo as helios
 
 
 class HeliosClientTests(unittest.TestCase):
