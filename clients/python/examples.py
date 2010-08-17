@@ -4,10 +4,12 @@ import time
 
 import json
 
-import helios
+from helios_mongo import client as mongo_client
+from helios_urllib2 import client as urllib2_client
 
 
-def run_example(delay, values, quit_after_secs):
+def run_example(client_name, delay, values, quit_after_secs):
+    client = globals()[client_name + "_client"]
     start = None
     if not values:
         values = {}
@@ -16,12 +18,12 @@ def run_example(delay, values, quit_after_secs):
     while True:
         timestamp = time.time()
         print "Recording event with timestamp: %s" % timestamp
-        print "Queue size: %s" % helios.internal_queue_size()
+        print "Queue size: %s" % client.qsize()
         kwargs = {"app_timestamp": timestamp}
         kwargs.update(values)
-        helios.record("clock_tick", **kwargs)
+        client.record("clock_tick", **kwargs)
         time.sleep(delay)
-        if start and time.time() - start > quit_after_secs:
+        if quit_after_secs and start and time.time() - start > quit_after_secs:
             break
 
 
@@ -30,7 +32,8 @@ def main():
     parser.add_option("-d", "--delay", default="1")
     parser.add_option("-j", "--json", help="specify JSON to be added to event")
     parser.add_option("--debug", action="store_true")
-    parser.add_option("--quit-after-secs")
+    parser.add_option("--quit-after-secs", default="0")
+    parser.add_option("--client", default="urllib2")
     options, args = parser.parse_args()
 
     if options.debug:
@@ -41,7 +44,7 @@ def main():
     values = None
     if options.json:
         values = json.loads(options.json)
-    run_example(delay, values, quit_after_secs)
+    run_example(options.client, delay, values, quit_after_secs)
 
 
 if __name__ == '__main__':

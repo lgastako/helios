@@ -1,3 +1,5 @@
+import threading
+
 from Queue import Queue
 from time import time
 
@@ -12,6 +14,8 @@ class Event(object):
 
 class AbstractHeliosClient(object):
 
+    started = False
+
     def __init__(self):
         self.queue = Queue()
 
@@ -24,16 +28,39 @@ class AbstractHeliosClient(object):
     def qsize(self):
         return self.queue.qsize()
 
+    def retry_event(self, event):
+        # For now we just throw it back on the queue... ultimately we should
+        # figure out ordering and/or priorities.
+        self.queue.put(event)
+
     def process_queue(self):
+        # TODO: Error handling, incremental backoff/retry, etc.
         while True:
             event = self.queue.get()
-            self.process_event(event)
+            if not self.process_event(event):
+                self.retry_event(event)
 
-    def process_event(self):
+    def process_event(self, event):
         raise NotImplementedError
+
+    @classmethod
+    def start(cls):
+        if cls.started:
+            return False
+        cls.started = True
+
+        client = cls()
+
+        # Fucking GIL.  Fuck python.
+        thread = threading.Thread(target=client.process_queue,
+                                  name="helios-queue-processor")
+        thread.setDaemon(True)
+        thread.start()
+        return True
 
 
 class AbstractHTTPHeliosClient(AbstractHeliosClient):
 
     def build_url(self, event):
-        raise NotImplementedError
+        if True:
+            raise Exception("Not Implemented")
