@@ -104,6 +104,46 @@ of it, so for now, no.
 ... Should we send current timestamp and let the server do adjustments or what?
 
 
+Client Configuration
+--------------------
+
+Here are my thoughts on client configuration currently (very much
+subject to change):
+
+1. Make sure clients always have a sensible set of defaults.  Ideally
+   the defaults would be part of the spec so that all clients in all
+   languages would have the same or at least very similar defaults.
+
+2. The client will look for a config file in some default location
+   (does python have a java-like getresource type of thing? do other
+   languages in general?) and if it's not there it will check for an
+   environment variable (e.g. "HELIOS_CFG_FILE", etc) and if it exists
+   it will try to read that file.  If no config file exists then
+   everything will be the default.
+
+  - Open question: what should the behavior be if a HELIOS_CFG_FILE
+    was specified but doesn't exist?
+
+3. The default localhost to write to should be some port on localhost.
+   There should exist a store-and-forward server that you can start on
+   all remote hosts which is configured to forward to the central
+   server.  Then if you run this on all of your remote hosts you can
+   probably get away with zero configuration and you get an extra
+   layer of reliability.
+
+   - Obviously the default config of the store-and-forwarder should be
+     sensible and in general only the central host(s) should be
+     provided, perhaps even on the command line instead of in a config
+     file?
+
+- Open question: Format for the config files?  If it was python only
+  I'd like to use ConfigParser, but should we have a standard format
+  for all clients or let them default to their respective language's
+  different confing file formats (e.g. configparser for python but
+  properties files and/or xml for java, yaml for ruby, json for
+  ssjs, etc?)
+
+
 Other junk
 ----------
 http://www.mongodb.org/display/DOCS/Using+a+Large+Number+of+Collections
