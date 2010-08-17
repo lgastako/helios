@@ -37,6 +37,9 @@ NOTE: These are all in a state of flux and may change at any moment.
   cross-cutting concerns like security and load balancing can be
   off-loaded to systems optimized for handling these concerns.
 
+  It also eliminates a the mongo client dependency in each client
+  implementation.
+
   - The obvious corollary to this is that the HTTP communication
     should be optimized using e.g. Keep-Alives and/or HTTP pipelining.
     Of course the spec says that pipelining should not be used for non
