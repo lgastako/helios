@@ -68,7 +68,17 @@ class AbstractHeliosClient(object):
         # Fucking GIL.  Fuck python.
         thread = threading.Thread(target=self.process_queue,
                                   name="helios-queue-processor")
+
+        # This is questionable as daemon threads get killed when other
+        # threads end, so we will lose data here.  I can't find a way
+        # to let daemon threads do cleanup.... maybe we could make it
+        # non-daemonic and have it keep checking for existence of
+        # other non-daemon threads and when there are no more then it
+        # suicides, but thats lame and probably hard to do while
+        # staying fast.
+        # Maybe we can use atexit?
         thread.setDaemon(True)
+
         thread.start()
         return True
 

@@ -10,8 +10,11 @@ class Client(AbstractHTTPHeliosClient):
         url, data = self.build_url_and_data(event)
         headers = {"Content-Type": "application/json"}
         request = Request(url, data, headers)
-        urlopen(request)
-        return True
+        try:
+            urlopen(request)
+            return True
+        except IOError:
+            return False
 
 
 client = Client()

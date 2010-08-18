@@ -6,6 +6,7 @@ import json
 
 from helios_mongo import client as mongo_client
 from helios_urllib2 import client as urllib2_client
+from helios_pycurl import client as pycurl_client
 
 
 def run_example(client_name, delay, values, quit_after_secs):
