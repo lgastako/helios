@@ -7,10 +7,22 @@ import json
 from helios_mongo import client as mongo_client
 from helios_urllib2 import client as urllib2_client
 from helios_pycurl import client as pycurl_client
+from helios_pycurl import client as urlgrabber_client
 
 
-def run_example(client_name, delay, values, quit_after_secs):
-    client = globals()[client_name + "_client"]
+def build_client_map():
+    client_map = {}
+    for key in globals():
+        if key.endswith("_client"):
+            prefix = key[:-len("_client")]
+            client_map[prefix] = globals()[key]
+    return client_map
+
+
+CLIENTS = build_client_map()
+
+
+def run_example(client, delay, values, quit_after_secs):
     start = None
     if not values:
         values = {}
@@ -52,8 +64,9 @@ def main():
     if options.json:
         values = json.loads(options.json)
 
+    client = CLIENTS[options.client]
     start = time.time()
-    count = run_example(options.client, delay, values, quit_after_secs)
+    count = run_example(client, delay, values, quit_after_secs)
     diff = time.time() - start
     qps = float(count) / diff
 

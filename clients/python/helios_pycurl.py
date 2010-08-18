@@ -1,5 +1,3 @@
-import threading
-
 import pycurl
 
 from abstractclient import AbstractHTTPHeliosClient
