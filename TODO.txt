@@ -1,0 +1,21 @@
+Python Clients
+--------------
+* Try a mechanize client? Probably not going to be good since it's not
+  optimized for speed.
+* Other python clients?
+
+Non-Python Clients
+------------------
+* Make some.
+
+Report Server
+-------------
+* Lots
+
+Collection Server
+-----------------
+* Lots
+
+Store-and-Forward Server
+------------------------
+* Make it.
