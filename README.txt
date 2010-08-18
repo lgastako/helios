@@ -14,7 +14,7 @@ Specific the goals are:
 * Provide a powerful interface for searching/filtering logged events
   based on the structure of the events.
 
-* Provide a lickable interface for doing standard reporting operations
+* Provide a likable interface for doing standard reporting operations
   on collected events.
 
 * Scale lots.
