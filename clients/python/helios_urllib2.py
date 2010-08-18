@@ -1,4 +1,5 @@
 from urllib2 import urlopen
+from urllib2 import Request
 
 from abstractclient import AbstractHTTPHeliosClient
 
@@ -6,8 +7,11 @@ from abstractclient import AbstractHTTPHeliosClient
 class Client(AbstractHTTPHeliosClient):
 
     def process_event(self, event):
-        url = self.build_url(event)
-        urlopen(url)
+        url, data = self.build_url_and_data(event)
+        headers = {"Content-Type": "application/json"}
+        request = Request(url, data, headers)
+        urlopen(request)
+        return True
 
 
 client = Client()

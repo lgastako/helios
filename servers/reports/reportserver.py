@@ -29,6 +29,12 @@ def adapt_query(query):
     return query
 
 
+def extract_fields(rdoc):
+    if not "fields" in rdoc:
+        return None
+    return json.dumps(rdoc["fields"])
+
+
 @app.route("/col/<collection_name>")
 def collection_view(collection_name):
 #    limit = request.args.get("limit", DEFAULT_LIMIT)
@@ -42,7 +48,7 @@ def collection_view(collection_name):
     db = get_mongo_db()
     collection = getattr(db, collection_name)
     raw_docs = collection.find(query).skip(offset).limit(limit)
-    docs = [(rdoc["_id"], rdoc["ts"], json.dumps(rdoc["fields"]))
+    docs = [(rdoc["_id"], rdoc["ts"], extract_fields(rdoc))
             for rdoc in raw_docs]
     count = collection.count()
     next_offset = None
@@ -75,4 +81,4 @@ def home_view():
 
 if __name__ == "__main__":
     app.debug = True # TODO: optparseize
-    app.run()
+    app.run(port=5001)

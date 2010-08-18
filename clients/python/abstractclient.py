@@ -4,6 +4,8 @@ import threading
 from Queue import Queue
 from time import time
 
+import json
+
 logger = logging.getLogger(__name__)
 
 
@@ -14,6 +16,12 @@ class Event(object):
         self.event_type = event_type
         self.args = args
 
+    @classmethod
+    def from_json(cls, json_data):
+        return cls(timestamp=json_data["ts"],
+                   event_type=json_data["type"],
+                   args=json_data["args"])
+
 
 class AbstractHeliosClient(object):
 
@@ -21,11 +29,15 @@ class AbstractHeliosClient(object):
         self.queue = Queue()
         self.started = False
 
+    def record_event(self, event):
+        self.queue.put(event)
+
     def record(self, event, **kwargs):
         timestamp = time()
-        self.queue.put(Event(timestamp=timestamp,
-                             event_type=event,
-                             args=kwargs))
+        event = Event(timestamp=timestamp,
+                      event_type=event,
+                      args=kwargs)
+        self.record_event(event)
 
     def qsize(self):
         return self.queue.qsize()
@@ -63,6 +75,17 @@ class AbstractHeliosClient(object):
 
 class AbstractHTTPHeliosClient(AbstractHeliosClient):
 
-    def build_url(self, event):
-        if True:
-            raise Exception("Not Implemented")
+    def _build_url(self):
+        # TODO: Configurize
+        return "http://localhost:5000/event/create"
+
+    def _build_data(self, event):
+        data = {"ts": event.timestamp,
+                "type": event.event_type,
+                "args": event.args}
+        return json.dumps(data)
+
+    def build_url_and_data(self, event):
+        url = self._build_url()
+        data = self._build_data(event)
+        return url, data
