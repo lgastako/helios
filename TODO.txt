@@ -1,3 +1,10 @@
+General
+-------
+* Make hostname a part of event.
+* Think through what else should be included in every record.
+* Standardize naming, terminology, etc.  Are we recording events or
+  items or values or records or what?
+
 Python Clients
 --------------
 * Try a mechanize client? Probably not going to be good since it's not
@@ -10,7 +17,8 @@ Non-Python Clients
 
 Report Server
 -------------
-* Lots
+* Lots, including but not limited to:
+* Add initial aggregate count report by date.
 
 Collection Server
 -----------------
