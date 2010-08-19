@@ -4,26 +4,44 @@ General
 * Think through what else should be included in every record.
 * Standardize naming, terminology, etc.  Are we recording events or
   items or values or records or what?
+* Pretty/Thorough/Etc Documentation.
+* Lots of unit/integration tests.
+
 
 Python Clients
 --------------
 * Try a mechanize client? Probably not going to be good since it's not
   optimized for speed.
 * Other python clients?
+* Lots of unit tests.
+
 
 Non-Python Clients
 ------------------
-* Make some.
+* Make some more, specifically at least:
+  - Java
+  - PHP
+  - C
+  - What else should we consider mandatory?
+
+* Ruby
+  - Betterize
 
 Report Server
 -------------
 * Lots, including but not limited to:
+* Add some simple input box style filter generators.
+* Add some example of integrating with Google Charts to get fancy.
 * Add initial aggregate count report by date.
+* Prettification.
+
 
 Collection Server
 -----------------
 * Lots
 
+
 Store-and-Forward Server
 ------------------------
 * Make it.
+* Come up with a better name for it.  "Satellite server"?

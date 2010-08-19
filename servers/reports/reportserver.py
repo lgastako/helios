@@ -32,7 +32,20 @@ def adapt_query(query):
 def extract_fields(rdoc):
     if not "fields" in rdoc:
         return None
-    return json.dumps(rdoc["fields"])
+    return rdoc["fields"]
+
+
+def generate_link(key, value):
+    return '?query={"%s"=%s}' % (key, value)
+
+
+def fancy_doc(doc):
+#    if doc:
+#        for key, value in doc.items():
+#            if isinstance(value, (basestring, 
+#            link = generate_link(key, value)
+#            doc[key] = '<a href="%s">%s</a>' % (link, value)
+    return json.dumps(doc)
 
 
 @app.route("/col/<collection_name>")
@@ -48,7 +61,7 @@ def collection_view(collection_name):
     db = get_mongo_db()
     collection = getattr(db, collection_name)
     raw_docs = collection.find(query).skip(offset).limit(limit)
-    docs = [(rdoc["_id"], rdoc["ts"], extract_fields(rdoc))
+    docs = [(rdoc["_id"], rdoc["ts"], fancy_doc(extract_fields(rdoc)))
             for rdoc in raw_docs]
     count = collection.count()
     next_offset = None
