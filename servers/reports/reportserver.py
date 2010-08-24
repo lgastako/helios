@@ -171,8 +171,7 @@ def augment_results_with_links(results, collection_name, group_by):
     return new_results
 
 
-@app.route("/count/<collection_name>")
-def count(collection_name):
+def do_count_work(collection_name):
     db = get_mongo_db()
     collection = getattr(db, collection_name)
     group_by = request.args.get("group_by")
@@ -199,11 +198,27 @@ def count(collection_name):
                                              group_by)
     else:
         count = collection.count()
-    return render_template("count.html",
-                           collection_name=collection_name,
-                           count=count,
-                           group_by=group_by,
-                           results=results)
+
+    return dict(collection_name=collection_name,
+                count=count,
+                group_by=group_by,
+                results=results)
+
+
+@app.route("/count/<collection_name>")
+def count(collection_name):
+    return render_template("count.html", **do_count_work(collection_name))
+
+
+@app.route("/count/<collection_name>/chart")
+def count_chart(collection_name):
+    data = do_count_work(collection_name)
+    values = [unicode(r[1]["value"])
+              for r in data["results"]]
+    data["result_data"] = ",".join(values)
+    data["chds"] = ",".join([min(values), max(values)])
+    return render_template("post_chart.html", **data)
+
 
 @app.route("/about")
 def about():
@@ -224,4 +239,4 @@ def home_view():
 
 if __name__ == "__main__":
     app.debug = True # TODO: optparseize
-    app.run(port=5001)
+    app.run(host="0.0.0.0", port=5001)

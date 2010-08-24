@@ -1,15 +1,21 @@
 {% extends "_base.html" %}
+
 {% block title %}Counts for {{ collection_name }}{% endblock %}
+
 {% block content %}
 <article>
   <h1>Counts for collection: {{ collection_name }}</h1>
   <h3>
-    Showing counts grouped by: {{ group_by or 'Nothing' }}
+    {% if group_by %}
+    Showing counts grouped by key: {{ group_by }}
+    {% else %}
+    Showing ungrouped counts
+    {% endif %}
   </h3>
-  <table border="1">
+  <table>
     <tr>
-      <th>key</th>
-      <th>count</th>
+      <th>Value</th>
+      <th>Count</th>
     </tr>
 {% if results %}
     {% for link, doc in results: %}
@@ -39,5 +45,6 @@
 <h4>Context Nav</h4>
 <ul>
   <li><a href="/col/{{ collection_name }}">Collection View</a></li>
+  <li><a id="chart" href="/count/{{ collection_name }}/chart{% if group_by %}?group_by={{ group_by }}{% endif %}">Chart</a></li>
 </ul>
 {% endblock %}
