@@ -5,6 +5,8 @@ import json
 from urllib import urlencode
 from operator import itemgetter
 
+from collections import defaultdict
+
 from flask import Flask
 from flask import render_template
 from flask import request
@@ -19,6 +21,15 @@ from pygments.filter import Filter
 from pygments.token import Token
 
 app = Flask(__name__)
+
+
+def safe_encode(value):
+    # TODO: Make better later
+    if value is None:
+        return b"None"
+    if isinstance(value, unicode):
+        return value.encode("ascii")
+    return value
 
 
 def get_mongo_db():
@@ -107,12 +118,10 @@ def fancy_doc(doc, indent):
     return highlight(code, lexer, formatter)
 
 
-@app.route("/col/<collection_name>")
-def collection_view(collection_name):
-#    limit = request.args.get("limit", DEFAULT_LIMIT)
+def do_collection_work(collection_name):
+    #    limit = request.args.get("limit", DEFAULT_LIMIT)
     limit = 20
     offset = int(request.args.get("offset", 0))
-    indent = True if request.args.get("indent") == "True" else False
 
     query = request.args.get("query", None)
     if query:
@@ -122,37 +131,73 @@ def collection_view(collection_name):
     db = get_mongo_db()
     collection = getattr(db, collection_name)
     raw_docs = collection.find(query).skip(offset).limit(limit)
-    docs = [(rdoc["_id"], rdoc["ts"], fancy_doc(extract_fields(rdoc),
-                                                indent=indent))
+    return locals()
+
+
+@app.route("/col/<collection_name>")
+def collection_view(collection_name):
+    indent = True if request.args.get("indent") == "True" else False
+
+# Dunno why this doesn't work, but ok, moving on...
+#    locals().update(do_collection_work(collection_name))
+    data = do_collection_work(collection_name)
+    raw_docs = data["raw_docs"]
+    collection = data["collection"]
+    offset = data["offset"]
+    limit = data["limit"]
+
+    pygments_css = HtmlFormatter().get_style_defs('.highlight')
+    docs = [(rdoc["_id"],
+             rdoc["ts"],
+             fancy_doc(extract_fields(rdoc),
+                       indent=indent))
             for rdoc in raw_docs]
+
     count = collection.count()
+
     next_offset = None
     prev_offset = None
     if count > offset + len(docs):
         next_offset = offset + limit
     if offset > 0:
         prev_offset = offset - limit
-    pygments_css = HtmlFormatter().get_style_defs('.highlight')
 
-    return render_template("collection.html",
-                           docs=docs,
-                           collection_name=collection_name,
-                           offset=offset,
-                           next_offset=next_offset,
-                           prev_offset=prev_offset,
-                           count=count,
-                           limit=limit,
-                           pygments_css=pygments_css,
-                           indent=indent)
+    data.update({
+            "next_offset": next_offset,
+            "prev_offset": prev_offset,
+            "count": count,
+            "docs": docs,
+            "pygments_css": pygments_css
+            })
+    return render_template("collection.html", **data)
 
 
-def safe_encode(value):
-    # TODO: Make better later
-    if value is None:
-        return b"None"
-    if isinstance(value, unicode):
-        return value.encode("ascii")
-    return value
+@app.route("/col/<collection_name>/chart")
+def collection_chart_view(collection_name):
+    data = do_collection_work(collection_name)
+    values = defaultdict(list)
+    for r in data["raw_docs"]:
+        # TODO: If there are missing keys from some records, the chart
+        # will be hosed.
+        for key, value in r["fields"].items():
+            values[key].append(value)
+    def safe_float(x):
+        return float(x or 0.0)
+    def encode_values():
+        mx = 0
+        import sys
+        mn = sys.maxint
+        vlists = []
+        for key, vlist in values.items():
+            vlist = map(safe_float, vlist) # TODO: Fix
+            vlists.append(",".join(map(unicode, vlist)))
+            mx = max(mx, max(vlist))
+            mn = min(mn, min(vlist))
+        return mn, mx, "|".join(vlists)
+    mn, mx, result_data = encode_values()
+    data["chds"] = ",".join(map(unicode, [mn, mx]))
+    data["result_data"] = result_data
+    return render_template("post_chart.html", **data)
 
 
 def generate_collection_query_link(result, base_path, group_by):

@@ -1,13 +1,15 @@
 {% extends "_base.html" %}
+
 {% block title %}Collection: {{ collection_name }}{% endblock %}
+
 {% block head %}
 <link rel="stylesheet" type="text/css" href="/static/s/pygments.css"/>
+<style type="text/css">
+#chart-area { display: none; }
+iframe { border: 0px; }
+</style>
 {% endblock %}
-{#  <header>
-    <navigation>
-      <a href="/">Home</a>
-    </navigation>
-#}
+
 {% block content %}
 <article>
   <h1>Records for collection: {{ collection_name }}</h1>
@@ -34,6 +36,11 @@
   <a href="/col/{{ collection_name }}?offset={{ next_offset }}">Next &gt;&gt;</a>
   {% endif %}
 </div>
+<div id="chart-area">
+  <h3>Chart</h3>
+  <iframe name="chart-frame" width="300" height="200" seamless="seamless">
+  </iframe>
+</div>
 </article>
 {% endblock %}
 
@@ -42,5 +49,15 @@
 <ul>
   <li><a href="/count/{{ collection_name }}">Count View</a></li>
   <li><a href="?indent={{ not indent }}">{{ "Disable" if indent else "Enable" }} indenting</a></li>
+  <li><a id="chart" href="/col/{{ collection_name }}/chart">Chart</a></li>
 </ul>
 {% endblock %}
+
+{% block js %}
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript">
+var collection_name = "{{ collection_name }}";
+</script>
+<script type="text/javascript" src="/static/j/p/col.js"></script>
+{% endblock %}
+
