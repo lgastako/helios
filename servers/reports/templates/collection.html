@@ -41,6 +41,14 @@ iframe { border: 0px; }
   <iframe name="chart-frame" width="300" height="200" seamless="seamless">
   </iframe>
 </div>
+<h3>Query Filter</h3>
+<form method="get">
+  <label>Query
+    <input type="text" name="query" value="{{ query or "" }}"/>
+  </label>
+  <input class="button" type="submit" value="(Re)Query"/>
+  <input id="clear" class="button" type="button" value="Clear"/>
+</form>
 </article>
 {% endblock %}
 

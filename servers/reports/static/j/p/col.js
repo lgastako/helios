@@ -10,4 +10,9 @@ $(function() {
     }
     return false;
   });
+  $("#clear").click(function() {
+   $("form input[name=query]").attr("value", "");
+   $("form").submit();
+   return false;
+  });
 });

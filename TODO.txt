@@ -48,12 +48,9 @@ Clients in General
 Report Server
 -------------
 * Lots, including but not limited to:
-* Add some simple input box style filter generators.
-* Add some example of integrating with Google Charts to get fancy.
-* Add initial aggregate count report by date.
-* Prettification.
 * Add user accounts so we can have customization.  Add ability to add
   favorite collections to your nav bar.
+* Clean up UI problems (e.g. data going under nav, etc)
 
 
 Collection Server

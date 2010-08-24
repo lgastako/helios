@@ -125,12 +125,12 @@ def do_collection_work(collection_name):
 
     query = request.args.get("query", None)
     if query:
-        query = adapt_query(json.loads(query))
+        adapted_query = adapt_query(json.loads(query))
     else:
-        query = {}
+        adapted_query = {}
     db = get_mongo_db()
     collection = getattr(db, collection_name)
-    raw_docs = collection.find(query).skip(offset).limit(limit)
+    raw_docs = collection.find(adapted_query).skip(offset).limit(limit)
     return locals()
 
 
