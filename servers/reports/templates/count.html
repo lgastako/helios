@@ -2,6 +2,13 @@
 
 {% block title %}Counts for {{ collection_name }}{% endblock %}
 
+{% block head %}
+<style type="text/css">
+#chart-area { display: none; }
+iframe { border: 0px; }
+</style>
+{% endblock %}
+
 {% block content %}
 <article>
   <h1>Counts for collection: {{ collection_name }}</h1>
@@ -31,6 +38,11 @@
     </tr>
 {% endif %}
   </table>
+  <div id="chart-area">
+    <h3>Chart</h3>
+    <iframe name="chart-frame" width="300" height="200" seamless="seamless">
+    </iframe>
+  </div>
   <h3>Group Options</h3>
   <form method="get">
     <label>Group by
@@ -48,3 +60,13 @@
   <li><a id="chart" href="/count/{{ collection_name }}/chart{% if group_by %}?group_by={{ group_by }}{% endif %}">Chart</a></li>
 </ul>
 {% endblock %}
+
+{% block js %}
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript">
+var collection_name = "{{ collection_name }}";
+var groupBy = "{{ group_by }}";
+</script>
+<script type="text/javascript" src="/static/j/p/count.js"></script>
+{% endblock %}
+
