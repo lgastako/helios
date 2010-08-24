@@ -6,6 +6,7 @@ General
   items or values or records or what? (Etc)
 * Pretty/Thorough/Etc Documentation.
 * Lots of unit/integration tests.
+* Figure out proper packaging
 
 
 Python Clients
