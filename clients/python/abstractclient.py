@@ -103,7 +103,9 @@ class AbstractHeliosClient(object):
         else:
             data = {}
         self.record(event_type, **data)
-        print "Recorded event: %s (%s)" % (event_type, data)
+        #print "Recorded event: %s (%s)" % (event_type, data)
+        # This needs to be removed but for now is necessary to make sure
+        # everything gets flushed
         import time
         time.sleep(1)
 
