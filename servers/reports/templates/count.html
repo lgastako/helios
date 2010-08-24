@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Helios: Collection: {{ collection_name }}</title>
+<style type="text/css">
+{{ pygments_css }}
+</style>
+</head>
+<body>
+  <header>
+    <navigation>
+      <a href="/">Home</a>
+    </navigation>
+    <table>
+      <tr>
+        <td>
+          Showing counts grouped by: {{ group_by or 'Nothing' }}
+        </td>
+        <td>
+          <a href="/col/{{ collection_name }}">Collection View</a>
+        </td>
+      </tr>
+    </table>
+  </header>
+  <article>
+    <table border="1">
+      <tr>
+        <th>key</th>
+        <th>count</th>
+      </tr>
+  {% if results %}
+      {% for link, doc in results: %}
+      <tr>
+        <td><a href="{{ link }}">{{ doc._id }}</a></td>
+        <td>{{ doc.value }}</td>
+      </tr>
+      {% endfor %}
+  {% else %}
+      <tr>
+        <td>ALL</td>
+        <td>{{ count }}</td>
+      </tr>
+  {% endif %}
+    </table>
+  </article>
+  <footer>
+    <navigation>
+      <a href="/">Home</a>
+    </navigation>
+  </footer>
+</body>
+</html>

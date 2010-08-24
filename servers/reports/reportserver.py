@@ -1,10 +1,15 @@
+from __future__ import unicode_literals
+
 import json
+
+from urllib import urlencode
 
 from flask import Flask
 from flask import render_template
 from flask import request
 
 from pymongo import Connection
+from pymongo.code import Code
 
 from pygments import highlight
 from pygments.lexers import JavascriptLexer
@@ -138,6 +143,64 @@ def collection_view(collection_name):
                            limit=limit,
                            pygments_css=pygments_css,
                            indent=indent)
+
+
+def safe_encode(value):
+    # TODO: Make better later
+    if value is None:
+        return b"None"
+    if isinstance(value, unicode):
+        return value.encode("ascii")
+    return value
+
+
+def generate_collection_query_link(result, base_path, group_by):
+    params = {
+        "query": json.dumps({
+                safe_encode(group_by): safe_encode(result["_id"])})}
+    return base_path + urlencode(params)
+
+
+def augment_results_with_links(results, collection_name, group_by):
+    base_path = "/col/" + collection_name + "?"
+    new_results = []
+    for result in results:
+        link = generate_collection_query_link(result, base_path, group_by)
+        new_results.append((link, result))
+    return new_results
+
+
+@app.route("/count/<collection_name>")
+def count(collection_name):
+    db = get_mongo_db()
+    collection = getattr(db, collection_name)
+    group_by = request.args.get("group_by")
+    count = 0
+    results = None
+    if group_by:
+        # TODO: Fix all the injection attacks like this.
+        code = ("function() {\n"
+                "    emit(this.fields.%s, 1)\n"
+                "}\n") % group_by
+        mapf = Code(code)
+        reducef = Code("function(key, values) {\n"
+                       "    var total = 0;\n"
+                       "    for (var i=0; i<values.length; i++) {\n"
+                       "        total += values[i];\n"
+                       "    }\n"
+                       "    return total;\n"
+                       "}\n")
+        results = collection.map_reduce(mapf, reducef).find()
+        results = augment_results_with_links(results,
+                                             collection_name,
+                                             group_by)
+    else:
+        count = collection.count()
+    return render_template("count.html",
+                           collection_name=collection_name,
+                           count=count,
+                           group_by=group_by,
+                           results=results)
 
 
 @app.route("/")
