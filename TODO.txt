@@ -27,6 +27,7 @@ Non-Python Clients
 * Ruby
   - Betterize
 
+
 Report Server
 -------------
 * Lots, including but not limited to:
