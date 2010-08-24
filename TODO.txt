@@ -16,18 +16,30 @@ Python Clients
 * Other python clients?
 * Lots of unit tests.
 
+
 Ruby Client
 -----------
 * Betterize
 
 
+Java Client
+-----------
+* Make it.
+
+
+PHP Client
+----------
+* Make it.
+
+
+C Client
+--------
+* Make it.
+
+
 Clients in General
 ------------------
-* Make some more, specifically at least:
-  - Java
-  - PHP
-  - C
-  - What else should we consider mandatory?
+* What other languages should we consider mandatory?
 
 * Make sure each client is available via the appropriate language
   installation mechanism once they are ready (e.g. pypi, gems, etc).
