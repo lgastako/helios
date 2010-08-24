@@ -35,6 +35,8 @@ Report Server
 * Add some example of integrating with Google Charts to get fancy.
 * Add initial aggregate count report by date.
 * Prettification.
+* Add user accounts so we can have customization.  Add ability to add
+  favorite collections to your nav bar.
 
 
 Collection Server

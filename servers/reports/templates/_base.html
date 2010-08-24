@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Helios: {% block title %}Untitled Page{% endblock %}</title>
+  <meta charset="UTF-8">
+{#  <meta name="description" content="#"> #}
+{#  <meta name="robots" content="index,follow,noarchive"> #}
+  <link rel="stylesheet" href="/static/s/a.css">
+  {% block head %}
+  {% endblock %}
+</head>
+<body id="{% block page_id %}non-specific{% endblock %}">
+  <div id="a">
+    <header>
+      <a href="/" title="Go to Homepage"><strong>Helios</strong> Reporting</a>
+      <p>Welcome to Helios, where anything is possible.</a></p>
+    </header>
+    <div id="b">
+      {% block content %}
+      No content defined for this page.
+      {% endblock %}
+      <aside>
+        <h4>Search</h4>
+        <form action="#" class="s">
+          <input name="search" type="text" value="Type term and hit enter...">
+        </form>
+        <nav>
+          {% block extra_nav %}
+          {% endblock %}
+          <h4>Perma Nav</h4>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="http://html5.validator.nu/?doc=TODO">Validate This Page</a></li>
+          </ul>
+        </nav>
+      </aside>
+    </div>
+    <footer>
+      <p>Template Design &amp; Markup by <a href="http://www.jabz.info/contact/jonas-jared-jacek/" title="Profile of Jonas Jacek">Jonas Jacek</a> for <a href="http://www.owmx.com/" title="Free HTML5 &amp; CSS3 Web Template | owmx.com">Free HTML5 &amp; CSS3 Web Templates</a>.</p>
+      <p>Helios &copy; 2010 John Evans</p>
+    </footer>
+  </div>
+</html>

@@ -1,58 +1,45 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Helios: Collection: {{ collection_name }}</title>
-<style type="text/css">
-{{ pygments_css }}
-</style>
-</head>
-<body>
-  <header>
+{% extends "_base.html" %}
+{% block title %}Collection: {{ collection_name }}{% endblock %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="/static/s/pygments.css"/>
+{% endblock %}
+{#  <header>
     <navigation>
       <a href="/">Home</a>
     </navigation>
-    <table>
-      <tr>
-        <td>
-          Showing {{ offset }} to {{ offset + limit }} of {{ count }}.
-        </td>
-        <td>
-          <a href="?indent={{ not indent }}">{{ "disable" if indent else "enable" }} indenting</a>
-        </td>
-        <td>
-          <a href="/count/{{ collection_name }}">Count</a>
-        </td>
-      </tr>
-    </table>
-  </header>
-  <article>
-    <table border="1">
-      <tr>
-        <th>id</th>
-        <th>timestamp</th>
-        <th>doc</th>
-      </tr>
-      {% for doc_id, timestamp, doc in docs: %}
-      <tr>
-        <td>{{ doc_id }}</td>
-        <td>{{ timestamp }}</td>
-        <td>{{ doc|safe }}</td>
-      </tr>
-      {% endfor %}
-    </table>
-  </article>
-  <navigation>
-    {% if offset > 0 %}
-    <a href="/col/{{ collection_name }}?offset={{ prev_offset }}">&lt;&lt; Prev</a>
-    {% endif %}
-    {% if next_offset %}
-    <a href="/col/{{ collection_name }}?offset={{ next_offset }}">Next &gt;&gt;</a>
-    {% endif %}
-  </navigation>
-  <footer>
-    <navigation>
-      <a href="/">Home</a>
-    </navigation>
-  </footer>
-</body>
-</html>
+#}
+{% block content %}
+<article>
+  <h1>Showing {{ offset }} to {{ offset + limit }} of {{ count }}.</h1>
+  <table>
+    <tr>
+      <th>id</th>
+      <th>timestamp</th>
+      <th>doc</th>
+    </tr>
+    {% for doc_id, timestamp, doc in docs: %}
+    <tr>
+      <td>{{ doc_id }}</td>
+      <td>{{ timestamp }}</td>
+      <td>{{ doc|safe }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+<div>
+  {% if offset > 0 %}
+  <a href="/col/{{ collection_name }}?offset={{ prev_offset }}">&lt;&lt; Prev</a>
+  {% endif %}
+  {% if next_offset %}
+  <a href="/col/{{ collection_name }}?offset={{ next_offset }}">Next &gt;&gt;</a>
+  {% endif %}
+</div>
+</article>
+{% endblock %}
+
+{% block extra_nav %}
+<h4>Context Nav</h4>
+<ul>
+  <li><a href="/count/{{ collection_name }}">Count View</a></li>
+  <li><a href="?indent={{ not indent }}">{{ "Disable" if indent else "Enable" }} indenting</a></li>
+</ul>
+{% endblock %}

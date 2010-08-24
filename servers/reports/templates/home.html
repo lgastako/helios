@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Small HTML 5</title>
-</head>
-<body>
-  <a href="/">Home</a>
-  <table border="1">
-    <tr><th>collection</th><th>count</th></tr>
+{% extends "_base.html" %}
+{% block content %}
+<article>
+  <h1>Collections</h1>
+  <table>
+    <tr><th>Name</th><th>Total Count</th></tr>
     {% for collection_name, count in counts.items(): %}
     <tr>
       <td><a href="/col/{{ collection_name }}">{{ collection_name }}</a></td>
@@ -14,6 +11,5 @@
     </tr>
     {% endfor %}
   </table>
-  <a href="/">Home</a>
-</body>
-</html>
+</article>
+{% endblock %}

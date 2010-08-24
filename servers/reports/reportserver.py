@@ -102,7 +102,7 @@ def fancy_doc(doc, indent):
         code = json.dumps(doc, sort_keys=True, indent=4)
     else:
         code = json.dumps(doc, sort_keys=True)
-    formatter = LinkingHtmlFormatter()
+    formatter = LinkingHtmlFormatter(nobackground=True)
 #    formatter = HtmlFormatter()
     return highlight(code, lexer, formatter)
 
@@ -204,6 +204,10 @@ def count(collection_name):
                            count=count,
                            group_by=group_by,
                            results=results)
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
 
 
 @app.route("/")
