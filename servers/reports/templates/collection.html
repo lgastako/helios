@@ -10,7 +10,8 @@
 #}
 {% block content %}
 <article>
-  <h1>Showing {{ offset }} to {{ offset + limit }} of {{ count }}.</h1>
+  <h1>Records for collection: {{ collection_name }}</h1>
+  <p>Showing {{ offset }} to {{ offset + limit }} of {{ count }}.</p>
   <table>
     <tr>
       <th>id</th>

@@ -2,15 +2,7 @@
 {% block title %}Counts for {{ collection_name }}{% endblock %}
 {% block content %}
 <article>
-  <h1>Collection: {{ collection_name }}</h1>
-  <h2>Counts</h2>
-  <h3>Group Options</h3>
-  <form method="get">
-    <label>Group by
-      <input type="text" name="group_by" value="{{ group_by or "" }}"/>
-    </label>
-    <input class="button" type="submit" value="(Re)Group"/>
-  </form>
+  <h1>Counts for collection: {{ collection_name }}</h1>
   <h3>
     Showing counts grouped by: {{ group_by or 'Nothing' }}
   </h3>
@@ -33,6 +25,13 @@
     </tr>
 {% endif %}
   </table>
+  <h3>Group Options</h3>
+  <form method="get">
+    <label>Group by
+      <input type="text" name="group_by" value="{{ group_by or "" }}"/>
+    </label>
+    <input class="button" type="submit" value="(Re)Group"/>
+  </form>
 </article>
 {% endblock %}
 
