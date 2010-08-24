@@ -17,6 +17,11 @@ Specific the goals are:
 * Provide a lickable interface for doing standard reporting operations
   on collected events.
 
+* Provide clients for lots of languages.  Ensure a consistent
+  interface and featureset across clients in different languages (by
+  having the clients supported by the core team instead of random
+  helpful folks).
+
 * Scale lots.
 
 We will likely be developing the python client first and foremost and
