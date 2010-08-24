@@ -16,6 +16,13 @@
         <td>
           Showing counts grouped by: {{ group_by or 'Nothing' }}
         </td>
+      </tr>
+      <tr>
+        <td>
+          Sort: <a href="?reverse={{ not reverse }}">{{ "descending" if reverse else "ascending" }}</a>
+        </td>
+      </tr>
+      <tr>
         <td>
           <a href="/col/{{ collection_name }}">Collection View</a>
         </td>
@@ -23,6 +30,9 @@
     </table>
   </header>
   <article>
+    <form method="get">
+       <input type="text" name="group_by" value="{{ group_by or "" }}">
+    </form>
     <table border="1">
       <tr>
         <th>key</th>

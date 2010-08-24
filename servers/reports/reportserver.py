@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import json
 
 from urllib import urlencode
+from operator import itemgetter
 
 from flask import Flask
 from flask import render_template
@@ -177,6 +178,7 @@ def count(collection_name):
     group_by = request.args.get("group_by")
     count = 0
     results = None
+    reverse = request.args.get("reverse") == "True"
     if group_by:
         # TODO: Fix all the injection attacks like this.
         code = ("function() {\n"
@@ -190,7 +192,8 @@ def count(collection_name):
                        "    }\n"
                        "    return total;\n"
                        "}\n")
-        results = collection.map_reduce(mapf, reducef).find()
+        results = list(collection.map_reduce(mapf, reducef).find())
+        results.sort(key=itemgetter("value"), reverse=reverse)
         results = augment_results_with_links(results,
                                              collection_name,
                                              group_by)

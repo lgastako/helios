@@ -9,8 +9,8 @@
     <tr><th>collection</th><th>count</th></tr>
     {% for collection_name, count in counts.items(): %}
     <tr>
-      <td><a href="/col/{{collection_name}}">{{collection_name}}</a></td>
-      <td>{{count}}</td>
+      <td><a href="/col/{{ collection_name }}">{{ collection_name }}</a></td>
+      <td><a href="/count/{{ collection_name }}">{{ count }}</a></td>
     </tr>
     {% endfor %}
   </table>
