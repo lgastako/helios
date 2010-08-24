@@ -82,6 +82,31 @@ class AbstractHeliosClient(object):
         thread.start()
         return True
 
+    def main(self, name):
+        if name != "__main__":
+            return
+        import optparse
+        parser = optparse.OptionParser()
+        options, args = parser.parse_args()
+
+        if not 0 < len(args) < 3:
+            parser.error("Must supply exactly one event type and"
+                         " optionally one JSON data structure.")
+
+        event_type = args[0]
+        if len(args) > 1:
+            json_data = args[1]
+            try:
+                data = json.loads(json_data)
+            except Exception:
+                parser.error("Could not parse JSON")
+        else:
+            data = {}
+        self.record(event_type, **data)
+        print "Recorded event: %s (%s)" % (event_type, data)
+        import time
+        time.sleep(1)
+
 
 class AbstractHTTPHeliosClient(AbstractHeliosClient):
 

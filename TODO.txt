@@ -15,8 +15,12 @@ Python Clients
 * Other python clients?
 * Lots of unit tests.
 
+Ruby Client
+-----------
+* Betterize
 
-Non-Python Clients
+
+Clients in General
 ------------------
 * Make some more, specifically at least:
   - Java
@@ -24,8 +28,8 @@ Non-Python Clients
   - C
   - What else should we consider mandatory?
 
-* Ruby
-  - Betterize
+* Make sure each client is available via the appropriate language
+  installation mechanism once they are ready (e.g. pypi, gems, etc).
 
 
 Report Server

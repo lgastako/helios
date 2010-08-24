@@ -46,3 +46,4 @@ class Client(AbstractHeliosClient):
 # goes.
 client = Client()
 client.start()
+client.main(__name__)
