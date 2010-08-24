@@ -2,15 +2,25 @@
 <html>
 <head>
 <title>Helios: Collection: {{ collection_name }}</title>
+<style type="text/css">
+{{ pygments_css }}
+</style>
 </head>
 <body>
   <header>
     <navigation>
       <a href="/">Home</a>
     </navigation>
-    <p>
-      Showing {{ offset }} to {{ offset + limit }} of {{ count }}.
-    </p>
+    <table>
+      <tr>
+        <td>
+          Showing {{ offset }} to {{ offset + limit }} of {{ count }}.
+        </td>
+        <td>
+          <a href="?indent={{ not indent }}">{{ "disable" if indent else "enable" }} indenting</a>
+        </td>
+      </tr>
+    </table>
   </header>
   <article>
     <table border="1">
@@ -23,7 +33,7 @@
       <tr>
         <td>{{ doc_id }}</td>
         <td>{{ timestamp }}</td>
-        <td>{{ doc }}</td>
+        <td>{{ doc|safe }}</td>
       </tr>
       {% endfor %}
     </table>

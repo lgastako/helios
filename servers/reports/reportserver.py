@@ -6,6 +6,12 @@ from flask import request
 
 from pymongo import Connection
 
+from pygments import highlight
+from pygments.lexers import JavascriptLexer
+from pygments.formatters import HtmlFormatter
+from pygments.filter import Filter
+from pygments.token import Token
+
 app = Flask(__name__)
 
 
@@ -39,13 +45,60 @@ def generate_link(key, value):
     return '?query={"%s"=%s}' % (key, value)
 
 
-def fancy_doc(doc):
-#    if doc:
-#        for key, value in doc.items():
-#            if isinstance(value, (basestring, 
-#            link = generate_link(key, value)
-#            doc[key] = '<a href="%s">%s</a>' % (link, value)
-    return json.dumps(doc)
+# class LinkingFilter(Filter):
+
+#     def __init__(self, **options):
+#         Filter.__init__(self, **options)
+
+#     def filter(self, lexer, stream):
+#         get_ready = False
+#         for ttype, value in stream:
+#             if get_ready and ttype is not Token.Text:
+#                 get_ready = False
+#                 value = "[HOLLA]%s[ENDHOLLA]" % value
+#             if ((ttype is Token.Punctuation and value == "{") or
+#                 (ttype is Token.Operator and value == ",")):
+#                 get_ready = True
+#             yield ttype, value
+
+
+class LinkingHtmlFormatter(HtmlFormatter):
+
+    # def wrap(self, source, outfile):
+    #     yield 0, '<div class="highlight"><pre>'
+    #     for i, t in source:
+    #         if i == 1:
+    #             # it's a line of formatted code
+    #            import ipdb; ipdb.set_trace()
+    #             t = t + '<br/>'
+    #         yield i, t
+    #     yield 0, '</pre></div>'
+
+    def wrap(self, source, outfile):
+        # overriding default behavior
+        # P.S. I know outfile isn't referenced, this is the same as the
+        # method I'm overriding.  hmmm.
+        return self._wrap_div(self._wrap_pre(self._link_names(source)))
+
+    def _link_names(self, source):
+        for code_type, line in source:
+            if code_type == 1:
+                yield code_type, line
+            else:
+                yield code_type, line
+
+
+def fancy_doc(doc, indent):
+    # TODO: chardet is slow.  get rid of it.
+    lexer = JavascriptLexer(encoding="chardet")
+#    lexer.add_filter(LinkingFilter())
+    if indent:
+        code = json.dumps(doc, sort_keys=True, indent=4)
+    else:
+        code = json.dumps(doc, sort_keys=True)
+    formatter = LinkingHtmlFormatter()
+#    formatter = HtmlFormatter()
+    return highlight(code, lexer, formatter)
 
 
 @app.route("/col/<collection_name>")
@@ -53,6 +106,8 @@ def collection_view(collection_name):
 #    limit = request.args.get("limit", DEFAULT_LIMIT)
     limit = 20
     offset = int(request.args.get("offset", 0))
+    indent = True if request.args.get("indent") == "True" else False
+
     query = request.args.get("query", None)
     if query:
         query = adapt_query(json.loads(query))
@@ -61,7 +116,8 @@ def collection_view(collection_name):
     db = get_mongo_db()
     collection = getattr(db, collection_name)
     raw_docs = collection.find(query).skip(offset).limit(limit)
-    docs = [(rdoc["_id"], rdoc["ts"], fancy_doc(extract_fields(rdoc)))
+    docs = [(rdoc["_id"], rdoc["ts"], fancy_doc(extract_fields(rdoc),
+                                                indent=indent))
             for rdoc in raw_docs]
     count = collection.count()
     next_offset = None
@@ -70,6 +126,8 @@ def collection_view(collection_name):
         next_offset = offset + limit
     if offset > 0:
         prev_offset = offset - limit
+    pygments_css = HtmlFormatter().get_style_defs('.highlight')
+
     return render_template("collection.html",
                            docs=docs,
                            collection_name=collection_name,
@@ -77,7 +135,9 @@ def collection_view(collection_name):
                            next_offset=next_offset,
                            prev_offset=prev_offset,
                            count=count,
-                           limit=limit)
+                           limit=limit,
+                           pygments_css=pygments_css,
+                           indent=indent)
 
 
 @app.route("/")

@@ -3,7 +3,7 @@ General
 * Make hostname a part of event.
 * Think through what else should be included in every record.
 * Standardize naming, terminology, etc.  Are we recording events or
-  items or values or records or what?
+  items or values or records or what? (Etc)
 * Pretty/Thorough/Etc Documentation.
 * Lots of unit/integration tests.
 
@@ -38,7 +38,8 @@ Report Server
 
 Collection Server
 -----------------
-* Lots
+* Lots, including but not limited to:
+* Convert away from using a collection per event type.
 
 
 Store-and-Forward Server
