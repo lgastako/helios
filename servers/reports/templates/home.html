@@ -1,7 +1,7 @@
 {% extends "_base.html" %}
 {% block content %}
 <article>
-  <h1>Collections</h1>
+  <h1>Collections ({{ total }} total)</h1>
   <table>
     <tr><th>Name</th><th>Total Count</th></tr>
     {% for collection_name, count in counts.items(): %}

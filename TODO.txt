@@ -66,7 +66,7 @@ Lots, including but not limited to:
   table headers are clickable.  Perhaps sorttable.js?
 * Clean up UI problems:
   * Data going under nav
-  * Write a real about page.
+  * Make collections on home page sortable / paginated.
 
 
 Collection Server

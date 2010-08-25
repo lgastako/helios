@@ -281,11 +281,14 @@ def about():
 def home_view():
     db = get_mongo_db()
     counts = {}
-    for col in db.collection_names():
+    collection_names = list(db.collection_names())
+    for col in collection_names:
         if col.startswith("system.") or col.startswith("tmp."):
             continue
         counts[col] = getattr(db, col).count()
+    total = len(collection_names)
     return render_template("home.html",
+                           total=total,
                            counts=counts)
 
 
