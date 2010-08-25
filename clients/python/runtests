@@ -1,0 +1,6 @@
+#!/bin/bash
+
+./activate-environment
+
+find ~/src/helios -name "*.pyc" -exec rm -f {} \;
+nosetests --with-doctest --logging-filter=CRITICAL $*
