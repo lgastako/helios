@@ -66,7 +66,6 @@ Lots, including but not limited to:
   table headers are clickable.  Perhaps sorttable.js?
 * Clean up UI problems:
   * Data going under nav
-  * Better names for "Context Nav" and "Perma Nav"
   * Write a real about page.
 
 
