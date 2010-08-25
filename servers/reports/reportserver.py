@@ -135,7 +135,7 @@ def do_collection_work(collection_name):
 
 @app.route("/col/<collection_name>")
 def collection_view(collection_name):
-    indent = True if request.args.get("indent") == "True" else False
+    indent = False if request.args.get("indent") == "False" else True
 
 # Dunno why this doesn't work, but ok, moving on...
 #    locals().update(do_collection_work(collection_name))
@@ -163,7 +163,8 @@ def collection_view(collection_name):
     data.update({"next_offset": next_offset,
                  "prev_offset": prev_offset,
                  "count": count,
-                 "docs": docs})
+                 "docs": docs,
+                 "indent": indent})
     return render_template("collection.html", **data)
 
 

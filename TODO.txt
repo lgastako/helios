@@ -56,7 +56,10 @@ Report Server
   but also that the report server itself will use to e.g. do dynamic
   map-reduces, charts, etc.
   * We need to get the design of this API REALLY right.
-* Clean up UI problems (e.g. data going under nav, etc)
+* Clean up UI problems:
+  * Data going under nav
+* Implement a consistent client-side(?) sorting mechanism so that
+  table headers are clickable.  Perhaps sorttable.js?
 
 
 Collection Server
