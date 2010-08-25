@@ -4,6 +4,11 @@
 
 {% block head %}
 <link rel="stylesheet" type="text/css" href="/static/s/pygments.css"/>
+<style type="text/css">
+#output-area {
+  display: none;
+}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -37,8 +42,12 @@ function(key, values) {
       Auto-clear results
       <input type="checkbox" checked="checked"/>
     </label>
-    <input type="submit" class="button" value="Execute"/>
+    <input id="execute" type="submit" class="button" value="Execute"/>
   </form>
+  <div id="output-area">
+    <p>Mapping and reducing... this might take a little while.</p>
+    <p>Please be patient.</p>
+  </div>
 </article>
 {% endblock %}
 
@@ -48,5 +57,13 @@ function(key, values) {
   <li><a href="/count/{{ collection_name }}">Count View</a></li>
   <li><a href="/col/{{ collection_name }}">Collection View</a></li>
 </ul>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript">
+var collection_name = "{{ collection_name }}";
+</script>
+<script type="text/javascript" src="/static/j/p/mapreduce.js"></script>
 {% endblock %}
 
