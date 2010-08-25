@@ -128,8 +128,7 @@ def do_collection_work(collection_name):
         adapted_query = adapt_query(json.loads(query))
     else:
         adapted_query = {}
-    db = get_mongo_db()
-    collection = getattr(db, collection_name)
+    collection = getattr(get_mongo_db(), collection_name)
     raw_docs = collection.find(adapted_query).skip(offset).limit(limit)
     return locals()
 
@@ -146,7 +145,6 @@ def collection_view(collection_name):
     offset = data["offset"]
     limit = data["limit"]
 
-    pygments_css = HtmlFormatter().get_style_defs('.highlight')
     docs = [(rdoc["_id"],
              rdoc["ts"],
              fancy_doc(extract_fields(rdoc),
@@ -162,13 +160,10 @@ def collection_view(collection_name):
     if offset > 0:
         prev_offset = offset - limit
 
-    data.update({
-            "next_offset": next_offset,
-            "prev_offset": prev_offset,
-            "count": count,
-            "docs": docs,
-            "pygments_css": pygments_css
-            })
+    data.update({"next_offset": next_offset,
+                 "prev_offset": prev_offset,
+                 "count": count,
+                 "docs": docs})
     return render_template("collection.html", **data)
 
 
@@ -198,6 +193,17 @@ def collection_chart_view(collection_name):
     data["chds"] = ",".join(map(unicode, [mn, mx]))
     data["result_data"] = result_data
     return render_template("post_chart.html", **data)
+
+
+@app.route("/col/<collection_name>/mapreduce")
+def collection_map_reduce_view(collection_name):
+    collection = getattr(get_mongo_db(), collection_name)
+    cursor = collection.find().limit(1)
+    example_doc = list(cursor)[0]
+    example_record = fancy_doc(extract_fields(example_doc), True)
+    return render_template("mapreduce.html",
+                           collection_name=collection_name,
+                           example_record=example_record)
 
 
 def generate_collection_query_link(result, base_path, group_by):

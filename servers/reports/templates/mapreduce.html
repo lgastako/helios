@@ -1,0 +1,52 @@
+{% extends "_base.html" %}
+
+{% block title %}Map Reduce for Collection: {{ collection_name }}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="/static/s/pygments.css"/>
+{% endblock %}
+
+{% block content %}
+<article>
+  <h1>{{ self.title() }}</h1>
+  <h2>Example Record</h2>
+  <div>
+    {{ example_record|safe }}
+  </div>
+  <h2>Configure Map / Reduce</h2>
+  <form>
+    <label>Map Function
+      <textarea>
+function() {
+   emit(this.foo, 1);
+}
+      </textarea>
+    </label>
+    <label>Reduce Function
+      <textarea>
+function(key, values) {
+    var total = 0;
+    for (var i in values) {
+        total += values[i];
+    }
+    return total;
+}
+      </textarea>
+    </label>
+    <label>
+      Auto-clear results
+      <input type="checkbox" checked="checked"/>
+    </label>
+    <input type="submit" class="button" value="Execute"/>
+  </form>
+</article>
+{% endblock %}
+
+{% block extra_nav %}
+<h4>Context Nav</h4>
+<ul>
+  <li><a href="/count/{{ collection_name }}">Count View</a></li>
+  <li><a href="/col/{{ collection_name }}">Collection View</a></li>
+</ul>
+{% endblock %}
+
