@@ -7,6 +7,8 @@ General
 * Pretty/Thorough/Etc Documentation.
 * Lots of unit/integration tests.
 * Figure out proper packaging
+* Settle on our own slogan or otherwise replace the stolen Zombo.com slogan
+  with something (e.g. Bugzilla-like fortunes)
 
 
 Python Clients
