@@ -1,0 +1,68 @@
+The basic idea (so far) is this:
+
+On any server that you want to be able to record events on, you run a
+satellite server.  The satellite server listens on port 2112 by
+default.
+
+Then in your code you just use the appropriate client for your
+language with no configuration and it knows that it can just talk to
+port 2112 on localhost, so no configuration of clients is ever
+required in the default configuration scenario.
+
+For example, using the python client might look something like this:
+
+    from helios_urllib2 import client as helios
+    helios.record("my_event", fruit1="apples", fruit2="oranges")
+
+or, ideally, eventually:
+
+    import helios
+    helios.record("my_event", fruit1="apples", fruit2="oranges")
+
+The satellite server is started with command line options that
+indicate what the remote host (and optionally port) for the
+(centralized) collection server are.
+
+All other configuration has reasonable defaults (queue sizes, etc).
+All of these hosts, ports and other configuration values can be
+overridden via config files and the like, but the hope is to reach a
+set of defaults that most people won't have to change.
+
+The individual clients maintain an internal queue to provide the
+ability to call the record functions in a frictionless manner, meaning
+that they immediately return control to the calling code and do not
+cause blocking even if they are unable to immediately deliver the
+events to the satellite server.
+
+When the satellite server is unavailable the clients will let the
+queue fill to a certain size and then start logging additional events
+to a log file which is also configured by default to grow only to a
+certain size.  If the log file hits the max size new events that come
+in will be logged to stderr with a message but will be otherwise
+ignored.  When the satellite server becomes available again the queue
+will be drained and the log will be replayed.
+
+Internally, the satellite server will use a normal helios client for
+forwarding what comes in to the collection server.  This means that it
+will have the same behavior so that there is frictionless acceptance
+of messages by the satellite server even if the collection server is
+unavailable and an attempt will be made to preserve events that
+overflow the queues on disk.  After the default limit has been reached
+any overflowing events will be logged to stderr and discarded.
+
+The collection server will receive all events and record them in
+mongodb.  (Either a single instance or multiple sharded instances).
+
+Internally, the collection server will use another "normal" helios
+client for doing the actual recording in mongodb (only this client
+will speak the mongo protocol instead of HTTP).  This means that it
+will have the same queueing / frictionless acceptance / recovery /
+error logging semantics.
+
+It may not make sense to have the clients do disk queues if satellite
+servers are in use, so we may make changes to the default architecture
+in the future as we discover what works best in practice.
+
+Now that the data has been collected it can be accessed through the
+reporting server.  For information on the reporting server see
+reporting-server.txt.
