@@ -52,6 +52,10 @@ Report Server
 * Lots, including but not limited to:
 * Add user accounts so we can have customization.  Add ability to add
   favorite collections to your nav bar.
+* Implement a RESTful JSON-based API both that can be called by users
+  but also that the report server itself will use to e.g. do dynamic
+  map-reduces, charts, etc.
+  * We need to get the design of this API REALLY right.
 * Clean up UI problems (e.g. data going under nav, etc)
 
 
