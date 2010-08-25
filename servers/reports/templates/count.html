@@ -57,6 +57,7 @@ iframe { border: 0px; }
 <h4>Context Nav</h4>
 <ul>
   <li><a href="/col/{{ collection_name }}">Collection View</a></li>
+  <li><a href="/col/{{ collection_name }}/mapreduce">MapReduce View</a></li>
   <li><a id="chart" href="/count/{{ collection_name }}/chart{% if group_by %}?group_by={{ group_by }}{% endif %}">Chart</a></li>
 </ul>
 {% endblock %}
