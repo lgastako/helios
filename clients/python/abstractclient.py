@@ -36,6 +36,8 @@ class AbstractHeliosClient(object):
     def __init__(self):
         self.queue = Queue()
         self.started = False
+        # For Testing purposes...remains True at all Times
+        self.process = True
 
     def record_event(self, event):
         self.queue.put(event)
@@ -58,7 +60,7 @@ class AbstractHeliosClient(object):
     def process_queue(self):
         logger.debug("process_queue started.")
         # TODO: Error handling, incremental backoff/retry, etc.
-        while True:
+        while self.process:
             event = self.queue.get()
             if not self.process_event(event):
                 self.retry_event(event)

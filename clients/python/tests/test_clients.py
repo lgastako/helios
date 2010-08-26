@@ -98,6 +98,30 @@ class TestAbstractHeliosClient(unittest.TestCase):
         self.client.retry_event(1)
         self.assertEquals(3, self.client.qsize())
 
+    def test_process_queue_continues_until_process_is_set__to_false(self):
+        """The client should continue until the process property
+           is set to false...Which is never, btw."""
+
+        def retry_event(event):
+            self.client.process = False
+
+        events = []
+        def process_event(event):
+            events.append(event)
+            return event
+
+        self.client.process_event = process_event
+        self.client.retry_event = retry_event
+
+        # Run three events, then stop
+        self.client.queue.put(True)
+        self.client.queue.put(True)
+        self.client.queue.put(True)
+        self.client.queue.put(False)
+
+        self.client.process_queue()
+        self.assertEquals([True, True, True, False], events)
+
     def test_queues_on_block(self):
         """The client should queue requests when the transport blocks."""
 
