@@ -3,16 +3,12 @@ priority within each area.
 
 General
 -------
-* Make hostname a part of event.
 * Think through what else should be included in every record.
 * Standardize naming, terminology, etc.  Are we recording events or
   items or values or records or what? (Etc)
-* Figure out proper packaging
 * Implement configuration throughout.
 * Lots of unit/integration tests.
 * Pretty/Thorough/Etc Documentation.
-* Settle on our own slogan or otherwise replace the stolen Zombo.com slogan
-  with something (e.g. Bugzilla-like fortunes)
 
 
 Python Clients
@@ -26,33 +22,6 @@ Python Clients
 * Other python clients?
 
 
-Ruby Client
------------
-* Betterize
-
-
-Java Client
------------
-* Make it.
-
-
-PHP Client
-----------
-* Make it.
-
-
-C Client
---------
-* Make it.
-
-
-Clients in General
-------------------
-* What other languages should we consider mandatory?
-* Make sure each client is available via the appropriate language
-  installation mechanism once they are ready (e.g. pypi, gems, etc).
-
-
 Report Server
 -------------
 Lots, including but not limited to:
@@ -60,19 +29,6 @@ Lots, including but not limited to:
   but also that the report server itself will use to e.g. do dynamic
   map-reduces, charts, etc.
   * We need to get the design of this API REALLY right.
-* Add user accounts so we can have customization.  Add ability to add
-  favorite collections to your nav bar.
-* Implement a consistent client-side(?) sorting mechanism so that
-  table headers are clickable.  Perhaps sorttable.js?
-* Clean up UI problems:
-  * Data going under nav
-  * Make collections on home page sortable / paginated.
-
-
-Collection Server
------------------
-Lots, including but not limited to:
-* Convert away from using a collection per event type.
 
 
 Store-and-Forward Server
