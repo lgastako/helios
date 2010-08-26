@@ -1,13 +1,15 @@
-require 'json'
-require 'net/http'
+require "json"
+require "net/http"
+require "socket"
 
 
 module Helios
+  HOSTNAME = Socket.gethostname
 end
 
 
 class Helios::Event
-  attr_accessor :timestamp, :event_type, :args
+  attr_accessor :hostname, :timestamp, :event_type, :args
 end
 
 
@@ -40,6 +42,7 @@ class Helios::AbstractClient
     kwargs = kwargs.clone
 
     event = Helios::Event.new
+    event.hostname = Helios::HOSTNAME
     event.timestamp = Time.now
     event.event_type = kwargs.delete(:event_type)
     event.args = kwargs
@@ -93,6 +96,7 @@ class Helios::AbstractHTTPClient < Helios::AbstractClient
 
   def build_data(event)
     data = {
+      "h" => event.hostname,
       "ts" => event.timestamp,
       "type" => event.event_type,
       "args" => event.args}
@@ -106,11 +110,6 @@ class Helios::Client < Helios::AbstractHTTPClient
     url, data = self.build_url_and_data(event)
     url = URI.parse(url)
     headers = {"Content-Type" => "application/json"}
-#    req = Net::HTTP::Post.new(url.path, data, headers)
-
-#    req.set_form_data(data)
-    # TODO: Error handling/retries
-#    Net::HTTP.new(url.host, url.port).start { |http| http.request(req) }
     Net::HTTP.new(url.host, url.port).post(url.path, data, headers)
   end
 end
@@ -120,6 +119,3 @@ module Helios
   CLIENT = Helios::Client.new
   CLIENT.start
 end
-
-
-

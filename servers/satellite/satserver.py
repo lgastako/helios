@@ -26,6 +26,7 @@ helios._build_url = lambda: "http://localhost:5150/event/create"
 @app.route("/event/create", methods=["POST"])
 def create_event_view():
     event = Event.from_json(request.json)
+    import ipdb; ipdb.set_trace()
     helios.record_event(event)
     return jsonify(status="OK")
 

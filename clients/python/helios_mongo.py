@@ -35,7 +35,8 @@ class Client(AbstractHeliosClient):
     def _convert_event(self, event):
         """Converts an event to a document postable to mongo."""
 
-        doc = {"ts": event.timestamp}
+        doc = {"h": event.hostname,
+               "ts": event.timestamp}
         if event.args:
             doc["fields"] = event.args
         return doc

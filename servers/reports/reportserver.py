@@ -146,6 +146,7 @@ def collection_view(collection_name):
     limit = data["limit"]
 
     docs = [(rdoc["_id"],
+             rdoc["h"],
              rdoc["ts"],
              fancy_doc(extract_fields(rdoc),
                        indent=indent))

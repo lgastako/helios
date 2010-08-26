@@ -1,12 +1,15 @@
 from __future__ import unicode_literals
 
 import json
-from time import time
 import unittest
+
+from time import time
+from socket import gethostname
 
 from mocker import Mocker
 
 import abstractclient
+
 from abstractclient import Event
 from abstractclient import AbstractHeliosClient
 from abstractclient import AbstractHTTPHeliosClient
@@ -16,7 +19,8 @@ class TestEvent(unittest.TestCase):
 
     def test_from_json_constructs_event(self):
         timestamp = time()
-        json_data = {"ts": timestamp,
+        json_data = {"h": "homer",
+                     "ts": timestamp,
                      "type": "event_type",
                      "args": ["some", "args"]}
         results = Event.from_json(json_data)
@@ -25,6 +29,7 @@ class TestEvent(unittest.TestCase):
         self.assertTrue(timestamp == results.timestamp)
         self.assertTrue(json_data["type"] == results.event_type)
         self.assertTrue(json_data["args"] == results.args)
+        self.assertTrue(json_data["h"] == results.hostname)
 
 
 class TestAbstractHeliosClient(unittest.TestCase):
@@ -97,7 +102,9 @@ class TestAbstractHTTPHeliosClient(unittest.TestCase):
         event = Event(timestamp=time(),
                       event_type="event type",
                       args=["my", "args"])
-        expected = {"ts": event.timestamp,
+        hostname = gethostname()
+        expected = {"h": hostname,
+                    "ts": event.timestamp,
                     "type": event.event_type,
                     "args": event.args}
         url, data = self.client.build_url_and_data(event)

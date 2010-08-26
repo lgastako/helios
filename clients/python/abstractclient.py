@@ -3,22 +3,30 @@ import threading
 
 from Queue import Queue
 from time import time
+from socket import gethostname
 
 import json
 
 logger = logging.getLogger(__name__)
 
+HOSTNAME = gethostname()
+
 
 class Event(object):
 
-    def __init__(self, timestamp=None, event_type=None, args=None):
+    def __init__(self, hostname=None, timestamp=None, event_type=None,
+                 args=None):
+        if hostname is None:
+            hostname = HOSTNAME
+        self.hostname = hostname
         self.timestamp = timestamp
         self.event_type = event_type
         self.args = args
 
     @classmethod
     def from_json(cls, json_data):
-        return cls(timestamp=json_data["ts"],
+        return cls(hostname=json_data["h"],
+                   timestamp=json_data["ts"],
                    event_type=json_data["type"],
                    args=json_data["args"])
 
@@ -32,10 +40,10 @@ class AbstractHeliosClient(object):
     def record_event(self, event):
         self.queue.put(event)
 
-    def record(self, event, **kwargs):
+    def record(self, event_type, **kwargs):
         timestamp = time()
         event = Event(timestamp=timestamp,
-                      event_type=event,
+                      event_type=event_type,
                       args=kwargs)
         self.record_event(event)
 
@@ -117,7 +125,8 @@ class AbstractHTTPHeliosClient(AbstractHeliosClient):
         return "http://localhost:2112/event/create"
 
     def _build_data(self, event):
-        data = {"ts": event.timestamp,
+        data = {"h": event.hostname,
+                "ts": event.timestamp,
                 "type": event.event_type,
                 "args": event.args}
         return json.dumps(data)

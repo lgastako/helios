@@ -17,12 +17,14 @@ iframe { border: 0px; }
   <table>
     <tr>
       <th>id</th>
+      <th>hostname</th>
       <th>timestamp</th>
       <th>doc</th>
     </tr>
-    {% for doc_id, timestamp, doc in docs: %}
+    {% for doc_id, hostname, timestamp, doc in docs: %}
     <tr>
       <td>{{ doc_id }}</td>
+      <td>{{ hostname }}</td>
       <td>{{ timestamp }}</td>
       <td>{{ doc|safe }}</td>
     </tr>
