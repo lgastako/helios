@@ -32,6 +32,12 @@ class TestEvent(unittest.TestCase):
         self.assertTrue(json_data["h"] == results.hostname)
 
 
+class NullClient(AbstractHeliosClient):
+
+    def process_event(self):
+        sleep(30)
+
+
 class TestAbstractHeliosClient(unittest.TestCase):
 
     def setUp(self):
@@ -91,6 +97,18 @@ class TestAbstractHeliosClient(unittest.TestCase):
         self.assertEquals(2, self.client.qsize())
         self.client.retry_event(1)
         self.assertEquals(3, self.client.qsize())
+
+    def test_queues_on_block(self):
+        """The client should queue requests when the transport blocks."""
+
+        client = NullClient()
+        start = time()
+        client.record("test")
+        end = time()
+        diff = end - start
+        # Is this a good enough check to confirm that it's not blocking?
+        self.assert_(diff < 0.01)
+        self.assertEquals(1, client.qsize())
 
 
 class TestAbstractHTTPHeliosClient(unittest.TestCase):
