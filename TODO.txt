@@ -8,7 +8,7 @@ General
   items or values or records or what? (Etc)
 * Implement configuration throughout.
 * Lots of unit/integration tests.
-* Pretty/Thorough/Etc Documentation.
+* Documentation.
 
 
 Python Clients
@@ -31,6 +31,6 @@ Lots, including but not limited to:
   * We need to get the design of this API REALLY right.
 
 
-Store-and-Forward Server
+Satellite Server
 ------------------------
 * Implement lots of unit tests.
