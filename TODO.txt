@@ -8,7 +8,7 @@ General
   items or values or records or what? (Etc)
 * Implement configuration throughout.
 * Lots of unit/integration tests.
-* Pretty/Thorough/Etc Documentation.
+* Documentation.
 
 
 Python Clients
