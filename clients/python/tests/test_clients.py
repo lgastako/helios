@@ -6,7 +6,7 @@ import unittest
 from time import time
 from socket import gethostname
 
-from mocker import Mocker
+from mocker import MockerTestCase
 
 import abstractclient
 
@@ -32,13 +32,16 @@ class TestEvent(unittest.TestCase):
         self.assertTrue(json_data["h"] == results.hostname)
 
 
-class TestAbstractHeliosClient(unittest.TestCase):
+class NullClient(AbstractHeliosClient):
+
+    def process_event(self):
+        sleep(30)
+
+
+class TestAbstractHeliosClient(MockerTestCase):
 
     def setUp(self):
         self.client = AbstractHeliosClient()
-        self.mocker = Mocker()
-        self.time = self.mocker.mock()
-        abstractclient.time = self.time
 
     def test_record_event_queues_event(self):
         event = "some event"
@@ -47,17 +50,18 @@ class TestAbstractHeliosClient(unittest.TestCase):
         self.assertEquals(event, self.client.queue.get_nowait())
 
     def test_record_records_event_on_queue(self):
-        # expect time request
-        self.time()
         timestamp = time()
+        mock_time = self.mocker.replace("time.time")
+        # expect time request
+        mock_time()
         # time request returns timestamp
         self.mocker.result(timestamp)
         args = {"some": "args",
                 "of some kind": 1}
         event_type = "event type"
 
-        with self.mocker:
-            self.client.record(event_type, **args)
+        self.mocker.replay()
+        self.client.record(event_type, **args)
 
         # verify results
         self.assertEquals(1, self.client.queue.qsize())
@@ -91,6 +95,77 @@ class TestAbstractHeliosClient(unittest.TestCase):
         self.assertEquals(2, self.client.qsize())
         self.client.retry_event(1)
         self.assertEquals(3, self.client.qsize())
+
+    def test_process_queue_continues_until_process_is_set__to_false(self):
+        """The client should continue until the process property
+           is set to false...Which is never, btw."""
+
+        def retry_event(event):
+            self.client.process = False
+
+        events = []
+        def process_event(event):
+            events.append(event)
+            return event
+
+        self.client.process_event = process_event
+        self.client.retry_event = retry_event
+
+        # Run three events, then stop
+        self.client.queue.put(True)
+        self.client.queue.put(True)
+        self.client.queue.put(True)
+        self.client.queue.put(False)
+
+        self.client.process_queue()
+        self.assertEquals([True, True, True, False], events)
+
+    def test_start_does_nothing_if_started(self):
+        # ensure no calls to threading.Thread
+        self.mocker.replace("threading.Thread")
+        # mock logging
+        mock_logger = self.mocker.mock()
+        self.mocker.result(mock_logger)
+        # replace the logger
+        abstractclient.logger = mock_logger
+        # expect a call
+        mock_logger.error("Already started.  Can't start again.")
+
+        self.client.started = True
+        self.mocker.replay()
+        self.assertFalse(self.client.start())
+
+    def test_start_starts_thread(self):
+        # ensure calls to threading.Thread
+        mock_threading = self.mocker.replace("threading.Thread")
+        # mock logging
+        mock_logger = self.mocker.mock()
+        self.mocker.result(mock_logger)
+        # replace the logger
+        abstractclient.logger = mock_logger
+
+        # expect threading call
+        mock_threading(target=self.client.process_queue,
+                       name="helios-queue-processor")
+        self.mocker.result(mock_threading)
+
+        mock_threading.setDaemon(True)
+        mock_threading.start()
+
+        self.mocker.replay()
+        self.assertTrue(self.client.start())
+
+    def test_queues_on_block(self):
+        """The client should queue requests when the transport blocks."""
+
+        client = NullClient()
+        start = time()
+        client.record("test")
+        end = time()
+        diff = end - start
+        # Is this a good enough check to confirm that it's not blocking?
+        self.assert_(diff < 0.01)
+        self.assertEquals(1, client.qsize())
 
 
 class TestAbstractHTTPHeliosClient(unittest.TestCase):
