@@ -13,6 +13,7 @@ import abstractclient
 from abstractclient import Event
 from abstractclient import AbstractHeliosClient
 from abstractclient import AbstractHTTPHeliosClient
+from abstractclient import DEFAULT_VALUES
 
 
 class TestEvent(unittest.TestCase):
@@ -166,6 +167,37 @@ class TestAbstractHeliosClient(MockerTestCase):
         # Is this a good enough check to confirm that it's not blocking?
         self.assert_(diff < 0.01)
         self.assertEquals(1, client.qsize())
+
+    def test_messages_exceeding_queue_size_are_dropped(self):
+        FAKE_QUEUE_SIZE = 3
+
+        try:
+            original_max_qsize = abstractclient.DEFAULT_VALUES.MAX_QUEUE_SIZE
+            abstractclient.DEFAULT_VALUES.MAX_QUEUE_SIZE = FAKE_QUEUE_SIZE
+
+            client = NullClient()
+            # Note: we intentionally don't .start() the client, so no
+            # messages will be processed.
+
+            for n in xrange(FAKE_QUEUE_SIZE):
+                client.record("test", number=n)
+
+            self.assertEquals(FAKE_QUEUE_SIZE, client.qsize())
+
+            client.record("test", number=-1)
+
+            self.assertEquals(FAKE_QUEUE_SIZE, client.qsize())
+
+            for n in xrange(FAKE_QUEUE_SIZE):
+                # I feel dirty touching the internals but don't know
+                # a better way right now
+                self.assertEqual(n, client.queue.get_nowait().args["number"])
+            self.assertEquals(0, client.qsize())
+
+        finally:
+            abstractclient.DEFAULT_VALUES.MAX_QUEUE_SIZE = original_max_qsize
+
+    # TODO: Add a test that when an event is dropped it is logged.
 
 
 class TestAbstractHTTPHeliosClient(unittest.TestCase):

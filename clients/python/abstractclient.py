@@ -2,6 +2,7 @@ import logging
 import threading
 
 from Queue import Queue
+from Queue import Full
 from time import time
 from socket import gethostname
 
@@ -10,6 +11,16 @@ import json
 logger = logging.getLogger(__name__)
 
 HOSTNAME = gethostname()
+
+
+class TemporaryConfig(object):
+    # maxsize determined by assumption of average event size (128
+    # characters) and desire to keep maximum queue size to a
+    # "reasonable size" such as 10mb, so 10mb / 128 = 81920 messages
+    # Need to make it configurable eventually, obviously.
+    MAX_QUEUE_SIZE = 81920
+
+DEFAULT_VALUES = TemporaryConfig()
 
 
 class Event(object):
@@ -34,13 +45,16 @@ class Event(object):
 class AbstractHeliosClient(object):
 
     def __init__(self):
-        self.queue = Queue()
+        self.queue = Queue(maxsize=DEFAULT_VALUES.MAX_QUEUE_SIZE)
         self.started = False
         # For Testing purposes...remains True at all Times
         self.process = True
 
     def record_event(self, event):
-        self.queue.put(event)
+        try:
+            self.queue.put_nowait(event)
+        except Full:
+            logger.debug("Queue full, dropping event: %s" % event)
 
     def record(self, event_type, **kwargs):
         timestamp = time()
@@ -55,7 +69,7 @@ class AbstractHeliosClient(object):
     def retry_event(self, event):
         # For now we just throw it back on the queue... ultimately we should
         # figure out ordering and/or priorities.
-        self.queue.put(event)
+        self.record_event(event)
 
     def process_queue(self):
         logger.debug("process_queue started.")
