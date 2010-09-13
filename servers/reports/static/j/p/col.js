@@ -3,6 +3,7 @@ $(function() {
   $("#chart").click(function(e) {
     e.preventDefault();
     $("#chart-area").toggle();
+    window.scrollTo(0, $("#chart-area").offset().top);
     if (!chartGenerated) {
       chartGenerated = true;
       var url = "/col/" + collection_name + "/chart";
